@@ -1,0 +1,71 @@
+# ==============================================================================
+# Shrine Survey - Apache Configuration (.htaccess)
+# قسم الشؤون الدينية - العتبة الحسينية المقدسة
+# ==============================================================================
+
+# 1. Enable Rewrite Engine (Relative rules supporting subdirectories)
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Route /api/responses to api.php
+    RewriteRule ^api/responses/?$ api.php [QSA,L]
+
+    # Route /api/delete to api.php?action=delete
+    RewriteRule ^api/delete/?$ api.php?action=delete [QSA,L]
+
+    # Route /api/update to api.php?action=update
+    RewriteRule ^api/update/?$ api.php?action=update [QSA,L]
+
+    # Route /api/clear to api.php?action=clear
+    RewriteRule ^api/clear/?$ api.php?action=clear [QSA,L]
+
+    # Route /api/health and /api/diagnostic to api.php?action=diagnostic
+    RewriteRule ^api/(health|diagnostic)/?$ api.php?action=diagnostic [QSA,L]
+
+    # Route /api/repair to api.php?action=repair
+    RewriteRule ^api/repair/?$ api.php?action=repair [QSA,L]
+
+    # Route /api/admins to api.php?action=admins_get
+    RewriteRule ^api/admins/?$ api.php?action=admins_get [QSA,L]
+
+    # Route /api/admin-auth to api.php?action=admin_login
+    RewriteRule ^api/admin-auth/?$ api.php?action=admin_login [QSA,L]
+</IfModule>
+
+# 2. CORS and Anti-Cache Headers
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Origin "*"
+    Header set Access-Control-Allow-Methods "GET, POST, OPTIONS, PUT, DELETE"
+    Header set Access-Control-Allow-Headers "Content-Type, Authorization, X-Requested-With, Cache-Control, Pragma, Expires"
+
+    # Disable caching for API and responses file
+    <FilesMatch "\.(php|json)$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0, post-check=0, pre-check=0"
+        Header set Pragma "no-cache"
+        Header set Expires "Thu, 01 Jan 1970 00:00:00 GMT"
+    </FilesMatch>
+</IfModule>
+
+# 3. Security: Protect Database, JSON Data Stores, and Server Scripts
+<FilesMatch "\.(db|sqlite|sqlite3|log|ps1|sql|env|bak)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+<FilesMatch "^(admins|responses)\.json$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order deny,allow
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# 4. Default Character Set
+AddDefaultCharset UTF-8

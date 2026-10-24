@@ -1,0 +1,10 @@
+﻿[
+  {
+    "username": "admin",
+    "password": "admin123",
+    "fullName": "المشرف العام - قسم الشؤون الدينية",
+    "role": "ADMIN",
+    "province": "كربلاء المقدسة",
+    "createdAt": "2026-01-01 00:00:00"
+  }
+]
